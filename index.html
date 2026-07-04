@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Belt &amp; Bar — 6-Week Block</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<style>
+  :root{
+    --bg:#14120e;
+    --surface:#1e1b15;
+    --surface2:#25211a;
+    --line:#332e24;
+    --ink:#ede8dc;
+    --muted:#9a927f;
+    --brass:#c99b3f;
+    --brass-dim:#8a6c2e;
+    --brass-ink:#14120e;
+    --fail:#b05a41;
+    --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,monospace;
+    --disp:"Avenir Next Condensed","Arial Narrow","Helvetica Neue",sans-serif;
+    --body:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);color:var(--ink);
+    font-family:var(--body);font-size:15px;line-height:1.45;
+    -webkit-font-smoothing:antialiased;
+    padding-bottom:48px;
+  }
+  .wrap{max-width:560px;margin:0 auto;padding:0 14px}
+
+  header{
+    position:sticky;top:0;z-index:10;
+    background:linear-gradient(var(--bg) 82%,rgba(20,18,14,.92));
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);
+    padding:10px 0 10px;
+  }
+  h1{
+    font-family:var(--disp);font-weight:700;text-transform:uppercase;
+    font-size:22px;letter-spacing:.06em;margin:0 0 2px;line-height:1.1;
+    text-wrap:balance;
+  }
+  h1 .amp{color:var(--brass)}
+  .sub{color:var(--muted);font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin:0 0 10px}
+
+  .seg{display:flex;gap:6px}
+  .seg button{
+    flex:1;appearance:none;border:1px solid var(--line);background:var(--surface);
+    color:var(--muted);font-family:var(--mono);font-size:13px;font-weight:600;
+    padding:8px 0;border-radius:6px;cursor:pointer;
+  }
+  .seg button.on{background:var(--brass);border-color:var(--brass);color:var(--brass-ink)}
+  .seg button:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+  .seg.days{margin-top:6px}
+  .seg.days button{font-family:var(--disp);text-transform:uppercase;letter-spacing:.05em;font-size:13px}
+
+  .weeknote{
+    margin:14px 0 0;padding:10px 12px;border-left:3px solid var(--brass);
+    background:var(--surface);border-radius:0 8px 8px 0;
+    font-size:13.5px;color:var(--ink);
+  }
+  .weeknote b{color:var(--brass)}
+
+  .dayhead{display:flex;align-items:baseline;justify-content:space-between;margin:18px 0 4px}
+  h2{
+    font-family:var(--disp);font-weight:700;text-transform:uppercase;
+    font-size:19px;letter-spacing:.05em;margin:0;
+  }
+  .est{font-family:var(--mono);font-size:12px;color:var(--muted)}
+
+  .skill{
+    border:1px dashed var(--brass-dim);border-radius:10px;
+    padding:12px 12px 10px;margin:10px 0 14px;background:rgba(201,155,63,.05);
+  }
+  .skill .tag{
+    font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--brass);margin-bottom:6px;
+  }
+  .skill ul{margin:0;padding-left:18px}
+  .skill li{margin:3px 0;font-size:13.5px}
+  .skill .rule{color:var(--muted);font-size:12px;margin-top:7px}
+
+  .ex{
+    background:var(--surface);border:1px solid var(--line);border-radius:10px;
+    padding:11px 12px;margin:0 0 9px;
+  }
+  .ex .top{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+  .ex .name{font-weight:600;font-size:15px}
+  .ex .name .ord{color:var(--brass);font-family:var(--mono);font-size:12.5px;margin-right:4px}
+  .ex .target{font-family:var(--mono);font-size:13px;color:var(--ink);white-space:nowrap}
+  .meta{display:flex;gap:6px;align-items:center;margin-top:4px;flex-wrap:wrap}
+  .chip{
+    font-family:var(--mono);font-size:11px;color:var(--muted);
+    border:1px solid var(--line);border-radius:5px;padding:2px 7px;background:var(--bg);
+  }
+  .chip.fail{color:#e0b0a0;border-color:var(--fail)}
+  .note{font-size:12.5px;color:var(--muted);margin-top:5px}
+
+  .track{display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap}
+  .field{display:flex;align-items:center;gap:5px}
+  .field label{font-family:var(--mono);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+  .field input{
+    width:56px;background:var(--bg);border:1px solid var(--line);border-radius:6px;
+    color:var(--ink);font-family:var(--mono);font-size:15px;padding:7px 6px;text-align:center;
+    font-variant-numeric:tabular-nums;
+  }
+  .field input:focus{outline:none;border-color:var(--brass)}
+  .setrow{display:flex;gap:7px;margin-left:auto}
+  .set{
+    width:34px;height:34px;border-radius:50%;border:1.5px solid var(--brass-dim);
+    background:transparent;color:var(--muted);font-family:var(--mono);font-size:12px;
+    cursor:pointer;padding:0;
+  }
+  .set.done{background:var(--brass);border-color:var(--brass);color:var(--brass-ink);font-weight:700}
+  .set:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+
+  details.rules{margin:18px 0 8px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+  details.rules summary{
+    cursor:pointer;padding:11px 12px;font-family:var(--disp);text-transform:uppercase;
+    letter-spacing:.06em;font-size:14px;font-weight:600;color:var(--brass);
+  }
+  details.rules .body{padding:0 14px 12px;font-size:13.5px}
+  details.rules .body p{margin:7px 0}
+  details.rules table{border-collapse:collapse;width:100%;font-family:var(--mono);font-size:12px;font-variant-numeric:tabular-nums}
+  details.rules th,details.rules td{border:1px solid var(--line);padding:5px 6px;text-align:center}
+  details.rules th{color:var(--muted);font-weight:600}
+  .tablewrap{overflow-x:auto}
+
+  .footer{color:var(--muted);font-size:12px;text-align:center;margin-top:22px}
+  @media (prefers-reduced-motion:no-preference){
+    .set,.seg button{transition:background .12s,color .12s,border-color .12s}
+  }
+</style>
+
+<header>
+  <div class="wrap">
+    <h1>Belt <span class="amp">&amp;</span> Bar</h1>
+    <p class="sub">6-week weighted calisthenics overload block · 93 kg</p>
+    <div class="seg weeks" id="weekSeg" role="tablist" aria-label="Week"></div>
+    <div class="seg days" id="daySeg" role="tablist" aria-label="Day"></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="weeknote" id="weekNote"></div>
+  <div id="day"></div>
+
+  <details class="rules">
+    <summary>Progression rules</summary>
+    <div class="body" id="rulesBody"></div>
+  </details>
+
+  <details class="rules">
+    <summary>Illustrative load targets (kg)</summary>
+    <div class="body">
+      <div class="tablewrap" id="loadTable"></div>
+      <p style="color:var(--muted)">The rep rule always wins over this table. It exists so you know what "on track" looks like.</p>
+    </div>
+  </details>
+
+  <p class="footer">Ticks and loads save on this device automatically.</p>
+</main>
+
+<script>
+"use strict";
+const PROGRAM = {
+  weekNotes: {
+    1: "<b>W1 — CALIBRATE.</b> Everything at 2 reps in reserve. Find the loads that put you at 6–8 reps. Dips &amp; chins bodyweight, capped at 10 even if easy. The numbers you log this week drive weeks 2–6.",
+    2: "<b>W2 — LOAD.</b> Double progression is live: final set of every primary to failure (dips exempt). Explosive high pull-ups begin. Dips take their first weight: +2.5–5 kg.",
+    3: "<b>W3 — EXPAND.</b> Chins go weighted (+5 kg). Nordics enter (3×3, 3 s down). Pistols take +5 kg. Dips +2.5 kg — the weekly cap holds even when reps feel easy.",
+    4: "<b>W4 — CONSOLIDATE.</b> Drop one back-off set from each primary (volume −20%); loads keep climbing. Upper B: dips replace weighted push-ups. Check in: elbows, wrists, sleep.",
+    5: "<b>W5 — HEAVIEST WEEK.</b> Full volume returns. Final sets to failure, bar speed honest. Tuck planche attempts only if advanced frog ≥ 10 s pain-free.",
+    6: "<b>W6 — TEST.</b> Rep-PRs at week-5 loads — no ramped max singles on dips. Skill max tests. Log everything; these numbers seed the next block.",
+  },
+  rules: `
+    <p><b>The engine — double progression.</b> Primaries live in 6–10 reps (pistols 5–8). When the <b>top set</b> hits the ceiling with clean form, add 2.5 kg next session; reps reset toward 6. Top set falls below 6 → strip 2.5 kg. More than 10 in the tank → the load was too light; raise it.</p>
+    <p><b>The governor.</b> Max <b>+2.5 kg per lift per week</b>, even when reps would allow more. Your strength will outrun your tendons this block; the cap is what lets you train to failure for 6 straight weeks without an elbow or sternum tapping out.</p>
+    <p><b>Failure policy.</b> W1: all sets 2 RIR (calibration). W2–5: <b>final set of every primary to muscular failure</b>; every other set 1–2 RIR. Dips: nothing to failure before W3. W6: tests only.</p>
+    <p><b>Ramp.</b> Two warm-up sets (50%, 75% of work load) before the first two lifts of every session. Uncounted.</p>
+    <p><b>Elbow watch.</b> Inner-elbow ache lasting over 24 h → freeze that lift's load for one week. It will still be there next week; a flexor-origin flare-up costs you two months.</p>
+    <p><b>Balance.</b> Exactly 14 push : 14 pull working sets per week. Skill holds and prehab never count — they are practice, not training.</p>
+    <p><b>Skill phases.</b> 60–70% effort, full rest between attempts, stop a drill after 2 sloppy attempts, hard 15-minute cap. Quality banked beats junk volume.</p>`,
+  loads: [
+    ["Pull-up","+5×6-8","+5×8-10","+7.5×6-8","+7.5×8-10","+10×7-9","PR +10-12.5"],
+    ["Dip","BW cal","+2.5-5","+5-7.5","+7.5-10","+10-12.5","PR +12.5"],
+    ["Chin-up","BW","BW","+5×6-8","+5×8-10","+7.5×6-8","PR +7.5-10"],
+    ["Bulgarian SS","+40","+40-42.5","+42.5","+45","+45-47.5","+47.5-50"],
+    ["Belt squat","+52.5","+52.5-55","+55","+57.5","+57.5-60","PR +60"],
+    ["Box pistol","BW","BW","+5","+5-7.5","+7.5-10","+10"]
+  ],
+  days: [
+    {
+      tab:"UP A", name:"Upper A — Belt Day", est:"~65 min",
+      skill:{ time:"12 min", rule:"60–70% effort · stop a drill after 2 sloppy attempts · 15-min hard cap.",
+        items:[
+          "Wrist prep 90 s → chest-to-wall handstand: W1 3×10–15 s → W3 30–40 s → W5 45–60 s + heel-off pauses",
+          "Planche line: frog holds (build 10→25 s) + planche leans 3×10–15 s · advanced frog W3+ · tuck attempts only once adv. frog ≥ 10 s"
+        ]},
+      ex:[
+        { ord:"A1", n:"Weighted Pull-Up", t:"4 × 6–10", rest:"3:00", sets:4, kg:true, reps:true, fail:"last set → failure (W2+)", note:"Start +5 kg. Ramp 50%/75% first. +2.5 kg when top set hits 10." },
+        { ord:"A2", n:"Weighted Dip", t:"4 × 6–10", rest:"3:00", sets:4, kg:true, reps:true, note:"W1: bodyweight, cap 10 even if easy — full depth, no bounce. W2: +2.5–5 kg. Hard +2.5 kg/week cap all block. No failure before W3." },
+        { ord:"B1", n:"Pseudo-Planche Push-Up", t:"3 × 6–10", rest:"2:00", sets:3, kg:true, reps:true, fail:"last set → failure (W2+)", note:"Deep lean, shoulders past hands. Add backpack kg once 3×10 is clean." },
+        { ord:"B2", n:"Feet-Elevated Row", t:"3 × 8–12", rest:"2:00", sets:3, kg:true, note:"Log feet height (cm) + backpack kg. Add load when 3×12." },
+        { ord:"C", n:"Hanging Leg Raise", t:"3 × 10–12", rest:"superset in A-rests", sets:3, note:"Strict, no swing." },
+        { ord:"P", n:"Prehab: plate Y-raise 2×12 + eccentric wrist curls 2×15", t:"2 sets", rest:"—", sets:2, note:"Light. Uncounted. Non-negotiable." }
+      ],
+      test:[
+        { ord:"T1", n:"Weighted Pull-Up — REP PR", t:"PR set @ W5 load", rest:"3:00", sets:3, kg:true, reps:true, fail:"PR set → failure", note:"2 ramp sets, then one all-out set. Target: +10–12.5 kg × 8–10." },
+        { ord:"T2", n:"Weighted Dip — REP PR", t:"PR set @ W5 load", rest:"3:00", sets:3, kg:true, reps:true, note:"Target: +12.5 kg × 6–8. No ramped singles — rep PR only." },
+        { ord:"T3", n:"Skill test: chest-to-wall handstand", t:"max hold", rest:"2:00", sets:2, reps:true, note:"Target 45–60 s. Log seconds in top-set field." },
+        { ord:"T4", n:"Skill test: frog / advanced frog", t:"max hold", rest:"2:00", sets:2, reps:true, note:"Target: frog 25–30 s or adv. frog 5–10 s." },
+        { ord:"T5", n:"Toes-to-Bar AMRAP", t:"1 max set", rest:"—", sets:1, reps:true }
+      ]
+    },
+    {
+      tab:"LO A", name:"Lower A — Heavy Legs", est:"~60 min",
+      skill:{ time:"10–12 min", rule:"Heel down, no knee cave · stop when balance saves get grabby.",
+        items:[
+          "Pistol technique, bodyweight: 3×3–5/leg — slow, paused bottom",
+          "L-sit line: 4 holds — tuck (W1–2) → one-leg (W3–4) → full attempts (W5+). Log sets × seconds."
+        ]},
+      ex:[
+        { ord:"A", n:"Weighted Bulgarian Split Squat", t:"4 × 6–10 /leg", rest:"3:00", sets:4, kg:true, reps:true, fail:"last set → failure (W2+)", note:"Start +40 kg — your logged 8RM zone. Belt + backpack." },
+        { ord:"B", n:"Belt Squat (standing on boxes)", t:"4 × 6–10", rest:"3:00", sets:4, kg:true, reps:true, fail:"last set → failure (W2+)", note:"Start +52.5 kg — you already own +50×10." },
+        { ord:"C", n:"Slide Leg Curl → Nordic Negative (W3+)", t:"2–3 × 3–8", rest:"2:00", sets:3, note:"W1–2: slide curls 2×8 only. W3+: Nordics 3×3–5, 3 s lowering → 5 s by W6. Zero hinge history — earn this slowly." },
+        { ord:"D", n:"Single-Leg Hip Thrust", t:"2–3 × 8–12 /leg", rest:"1:30", sets:3, kg:true, note:"2 sets W1–2 → 3 sets W3+. Plate on hips when 12 clean." },
+        { ord:"E", n:"Single-Leg Calf Raise", t:"3 × 12–15 /leg", rest:"superset", sets:3, kg:true, note:"Plate in hand, full stretch at bottom." }
+      ],
+      test:[
+        { ord:"T1", n:"Belt Squat — REP PR", t:"PR set @ W5 load", rest:"3:00", sets:3, kg:true, reps:true, note:"Target: +57.5–60 kg × 6–8." },
+        { ord:"T2", n:"Bulgarian SS — heavy top sets", t:"2 × 6–8 /leg", rest:"3:00", sets:2, kg:true, reps:true, note:"Target: +47.5–50 kg." },
+        { ord:"T3", n:"Nordic Negative", t:"3 × 5 (5 s down)", rest:"2:00", sets:3, note:"Quality test — control, no collapse." },
+        { ord:"T4", n:"L-sit — max hold", t:"best of 3", rest:"1:30", sets:3, reps:true, note:"Target: full 8–12 s or one-leg 15 s. Log seconds." }
+      ]
+    },
+    {
+      tab:"UP B", name:"Upper B — Press Day", est:"~65 min",
+      skill:{ time:"12 min", rule:"60–70% effort · stop a drill after 2 sloppy attempts · 15-min hard cap.",
+        items:[
+          "Wrist prep 90 s → kick-up practice: W1–2 learn the cartwheel bail · W4+ 5–8 kick-ups · W5–6 hunt 3–5 s freestanding catches",
+          "Muscle-up prerequisites: dip-bar support holds W1–2 · slow dip negatives W3–4 · low-bar transition drills W5–6. No full attempts this block — the gate: dips +10 kg × 8."
+        ]},
+      ex:[
+        { ord:"A1", n:"Chin-Up (supinated)", t:"4 × 6–10", rest:"3:00", sets:4, kg:true, reps:true, fail:"last set → failure (W2+)", note:"W1–2: bodyweight, cap 10. W3: +5 kg, then +2.5/week. Elbow-watch applies here first." },
+        { ord:"A2", n:"Weighted Push-Up → Dip (W4+)", t:"4 × 6–10", rest:"3:00", sets:4, kg:true, reps:true, fail:"last set → failure (W2+)", note:"W1–3: push-up, start +15 kg (backpack + plates). W4+: slot becomes your 2nd dip day — same load line as Upper A." },
+        { ord:"B1", n:"High Pull-Up (explosive)", t:"3 × 5", rest:"2:30", sets:3, note:"W1: easy technique. W2+: crisp to chest height, stop 2 short of failure. This is muscle-up power in the bank." },
+        { ord:"B2", n:"Pike Push-Up (feet elevated)", t:"3 × 6–10", rest:"2:00", sets:3, kg:true, note:"Log box height in cm; raise it when 3×10. Road to the handstand push-up." },
+        { ord:"C", n:"Toes-to-Bar", t:"3 × 8–10", rest:"superset in A-rests", sets:3 },
+        { ord:"P", n:"Prehab: rear-delt raise 2×12 + pronation rolls 2×12 + 30–45 s hang", t:"2 sets", rest:"—", sets:2, note:"Light. Uncounted." }
+      ],
+      test:[
+        { ord:"T1", n:"Chin-Up — REP PR", t:"PR set @ W5 load", rest:"3:00", sets:3, kg:true, reps:true, note:"Target: +7.5–10 kg × 8–10." },
+        { ord:"T2", n:"Dip (light volume)", t:"3 × 6 @ W4 load", rest:"2:30", sets:3, kg:true, note:"Stay fresh — the dip PR already happened on Upper A." },
+        { ord:"T3", n:"Muscle-up gate check", t:"pass / fail", rest:"—", sets:1, note:"Dips ≥ +10 kg × 8? Transitions smooth and pain-free? → attempts unlock in the NEXT block." },
+        { ord:"T4", n:"Pike Push-Up — box-height PR", t:"best 6 reps", rest:"2:00", sets:2, kg:true, note:"Log the cm." }
+      ]
+    },
+    {
+      tab:"LO B", name:"Lower B — Single-Leg", est:"~60 min",
+      skill:{ time:"10–12 min", rule:"Loaded pistols live below — this phase is position quality only.",
+        items:[
+          "L-sit focus: 4–5 quality holds, log sets × seconds",
+          "Deep-squat pry + hip mobility 2–3 min"
+        ]},
+      ex:[
+        { ord:"A", n:"Weighted Box Pistol", t:"3 × 5–8 /leg", rest:"2:30", sets:3, kg:true, reps:true, fail:"last set → failure (W3+)", note:"W1–2: bodyweight to a LOW box, quality reps. W3: +5 kg (plate at chest). +2.5/week cap → ~+10 kg by W6." },
+        { ord:"B", n:"Weighted Reverse Lunge (belt)", t:"3 × 8–10 /leg", rest:"2:00", sets:3, kg:true, reps:true, note:"Start +35 kg." },
+        { ord:"C", n:"Single-Leg RDL", t:"2–3 × 8–10 /leg", rest:"2:00", sets:3, kg:true, note:"+10 kg W1–2, flat back, feel the hamstring load the hip. 2 sets W1–2 → 3 sets W3+." },
+        { ord:"D", n:"Hip Thrust (plates on lap)", t:"3 × 10–12", rest:"2:00", sets:3, kg:true, note:"Start +30 kg. Hard 1 s squeeze at top." },
+        { ord:"E", n:"Copenhagen Plank", t:"2 × 20–30 s /side", rest:"superset", sets:2, note:"Bench under the top leg. Groin armor for pistols." },
+        { ord:"F", n:"Toes-to-Hands", t:"3 × 8", rest:"superset in A-rests", sets:3 }
+      ],
+      test:[
+        { ord:"T1", n:"Box Pistol — load test", t:"+10 kg × 5–6 /leg", rest:"2:30", sets:2, kg:true, reps:true },
+        { ord:"T2", n:"Free Pistol — max clean reps", t:"1 set /leg", rest:"2:00", sets:2, reps:true, note:"Target: 6–8/leg, heel down, controlled bottom." },
+        { ord:"T3", n:"Single-Leg RDL", t:"+20 kg × 8 /leg", rest:"2:00", sets:2, kg:true, note:"Posterior baseline set for next block." },
+        { ord:"T4", n:"Toes-to-Hands", t:"3 × 8", rest:"1:30", sets:3 }
+      ]
+    }
+  ]
+};
+/* RENDER + STATE */
+const $ = (s)=>document.querySelector(s);
+let week = +(localStorage.getItem("bb-week")||1);
+let dayIdx = +(localStorage.getItem("bb-day")||0);
+
+function key(w,d,e){ return `bb-w${w}-d${d}-e${e}`; }
+function load(w,d,e){ try{ return JSON.parse(localStorage.getItem(key(w,d,e))||"{}"); }catch(_){ return {}; } }
+function save(w,d,e,obj){ localStorage.setItem(key(w,d,e), JSON.stringify(obj)); }
+
+function renderSegs(){
+  const ws = $("#weekSeg"); ws.innerHTML = "";
+  for(let w=1; w<=6; w++){
+    const b = document.createElement("button");
+    b.textContent = "W"+w;
+    b.className = w===week ? "on":"";
+    b.setAttribute("role","tab");
+    b.onclick = ()=>{ week=w; localStorage.setItem("bb-week",w); render(); };
+    ws.appendChild(b);
+  }
+  const ds = $("#daySeg"); ds.innerHTML = "";
+  PROGRAM.days.forEach((d,i)=>{
+    const b = document.createElement("button");
+    b.textContent = d.tab;
+    b.className = i===dayIdx ? "on":"";
+    b.setAttribute("role","tab");
+    b.onclick = ()=>{ dayIdx=i; localStorage.setItem("bb-day",i); render(); };
+    ds.appendChild(b);
+  });
+}
+
+function exCard(ex, w, d, e){
+  const st = load(w,d,e);
+  const card = document.createElement("div");
+  card.className = "ex";
+  const chips = [];
+  if(ex.rest) chips.push(`<span class="chip">rest ${ex.rest}</span>`);
+  if(ex.fail) chips.push(`<span class="chip fail">${ex.fail}</span>`);
+  card.innerHTML = `
+    <div class="top">
+      <span class="name"><span class="ord">${ex.ord||""}</span>${ex.n}</span>
+      <span class="target">${ex.t}</span>
+    </div>
+    <div class="meta">${chips.join("")}</div>
+    ${ex.note?`<div class="note">${ex.note}</div>`:""}
+    <div class="track"></div>`;
+  const track = card.querySelector(".track");
+
+  if(ex.kg){
+    const f = document.createElement("div"); f.className="field";
+    f.innerHTML = `<label>kg</label>`;
+    const inp = document.createElement("input");
+    inp.type="number"; inp.inputMode="decimal"; inp.step="2.5"; inp.value = st.kg ?? "";
+    inp.onchange = ()=>{ const s=load(w,d,e); s.kg=inp.value; save(w,d,e,s); };
+    f.appendChild(inp); track.appendChild(f);
+  }
+  if(ex.reps){
+    const f = document.createElement("div"); f.className="field";
+    f.innerHTML = `<label>top set</label>`;
+    const inp = document.createElement("input");
+    inp.type="number"; inp.inputMode="numeric"; inp.value = st.reps ?? "";
+    inp.onchange = ()=>{ const s=load(w,d,e); s.reps=inp.value; save(w,d,e,s); };
+    f.appendChild(inp); track.appendChild(f);
+  }
+  const row = document.createElement("div"); row.className="setrow";
+  const n = ex.sets||3;
+  for(let i=0;i<n;i++){
+    const b = document.createElement("button");
+    b.className = "set" + ((st.sets&&st.sets[i])?" done":"");
+    b.textContent = i+1;
+    b.setAttribute("aria-label",`Set ${i+1}`);
+    b.onclick = ()=>{
+      const s = load(w,d,e); s.sets = s.sets||[];
+      s.sets[i] = !s.sets[i]; save(w,d,e,s);
+      b.classList.toggle("done", !!s.sets[i]);
+    };
+    row.appendChild(b);
+  }
+  track.appendChild(row);
+  return card;
+}
+
+function render(){
+  renderSegs();
+  $("#weekNote").innerHTML = PROGRAM.weekNotes[week] || "";
+  const d = PROGRAM.days[dayIdx];
+  const root = $("#day"); root.innerHTML = "";
+  if(!d) return;
+  const head = document.createElement("div"); head.className="dayhead";
+  head.innerHTML = `<h2>${d.name}</h2><span class="est">${d.est||""}</span>`;
+  root.appendChild(head);
+
+  const skill = document.createElement("div"); skill.className="skill";
+  skill.innerHTML = `<div class="tag">Skill phase · ${d.skill.time}</div>
+    <ul>${d.skill.items.map(i=>`<li>${i}</li>`).join("")}</ul>
+    <div class="rule">${d.skill.rule}</div>`;
+  root.appendChild(skill);
+
+  const list = (week===6 && d.test) ? d.test : d.ex;
+  list.forEach((ex,e)=> root.appendChild(exCard(ex, week, dayIdx, e)));
+
+  $("#rulesBody").innerHTML = PROGRAM.rules;
+  if(PROGRAM.loads.length){
+    const head2 = ["Lift","W1","W2","W3","W4","W5","W6"];
+    $("#loadTable").innerHTML = `<table><tr>${head2.map(h=>`<th>${h}</th>`).join("")}</tr>` +
+      PROGRAM.loads.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join("")}</tr>`).join("") + "</table>";
+  }
+}
+render();
+</script>
+
+</html>
