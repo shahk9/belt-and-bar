@@ -129,8 +129,50 @@
   .tablewrap{overflow-x:auto}
 
   .footer{color:var(--muted);font-size:12px;text-align:center;margin-top:22px}
+
+  .timerbar{
+    display:none;align-items:center;gap:8px;margin-top:8px;
+    background:var(--surface);border:1px solid var(--brass-dim);border-radius:8px;
+    padding:7px 10px;
+  }
+  .timerbar .dot{width:8px;height:8px;border-radius:50%;background:var(--fail);flex:none}
+  .timerbar .tday{font-family:var(--disp);text-transform:uppercase;font-size:13px;letter-spacing:.05em;color:var(--muted);white-space:nowrap}
+  .timerbar .clock{font-family:var(--mono);font-size:17px;font-weight:700;font-variant-numeric:tabular-nums;margin-left:auto}
+  .btn{
+    appearance:none;border:1px solid var(--brass);background:var(--brass);color:var(--brass-ink);
+    font-family:var(--disp);text-transform:uppercase;letter-spacing:.05em;font-size:13px;font-weight:600;
+    padding:7px 12px;border-radius:7px;cursor:pointer;
+  }
+  .btn.ghost{background:transparent;color:var(--brass)}
+  .btn.small{font-size:12px;padding:6px 10px}
+  .btn:focus-visible,.iconbtn:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+  .iconbtn{appearance:none;border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:7px;width:30px;height:30px;cursor:pointer;font-size:13px;padding:0;flex:none}
+
+  .logentry{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:11px 12px;margin:0 0 9px;cursor:pointer}
+  .logentry .lrow{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+  .logentry .ldate{font-family:var(--mono);font-size:13px;color:var(--brass);font-variant-numeric:tabular-nums}
+  .logentry .lday{font-weight:600;font-size:14px}
+  .logentry .ldur{margin-left:auto;font-family:var(--mono);font-size:12px;color:var(--muted);white-space:nowrap}
+  .whoop{
+    background:var(--bg);border:1px solid var(--line);border-radius:8px;
+    padding:10px;margin:10px 0 8px;font-family:var(--mono);font-size:12px;line-height:1.5;
+    white-space:pre;overflow-x:auto;color:var(--ink);
+  }
+  .logactions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .settings .body p{color:var(--muted);font-size:12.5px}
+  .tokenrow{display:flex;gap:8px;margin:8px 0}
+  .tokenrow input{
+    flex:1;background:var(--bg);border:1px solid var(--line);border-radius:6px;
+    color:var(--ink);font-family:var(--mono);font-size:12px;padding:8px;min-width:0;
+  }
+  .tokenrow input:focus{outline:none;border-color:var(--brass)}
+  .syncstatus{font-size:12px;color:var(--muted);margin-top:8px;min-height:16px}
+  .empty{color:var(--muted);text-align:center;padding:28px 0;font-size:13.5px}
+
   @media (prefers-reduced-motion:no-preference){
     .set,.seg button{transition:background .12s,color .12s,border-color .12s}
+    .timerbar .dot{animation:pulse 1.6s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
   }
 </style>
 
@@ -140,6 +182,13 @@
     <p class="sub">6-week weighted calisthenics overload block · 93 kg</p>
     <div class="seg weeks" id="weekSeg" role="tablist" aria-label="Week"></div>
     <div class="seg days" id="daySeg" role="tablist" aria-label="Day"></div>
+    <div class="timerbar" id="timerBar">
+      <span class="dot"></span>
+      <span class="tday" id="timerDay"></span>
+      <span class="clock" id="timerClock">0:00</span>
+      <button class="btn small" id="finishBtn">Finish &amp; Save</button>
+      <button class="iconbtn" id="discardBtn" aria-label="Discard workout timer" title="Discard">✕</button>
+    </div>
   </div>
 </header>
 
@@ -160,7 +209,7 @@
     </div>
   </details>
 
-  <p class="footer">Ticks and loads save on this device automatically.</p>
+  <p class="footer">Ticks and loads save on this device. Finished workouts back up to GitHub once a token is set (LOG tab).</p>
 </main>
 
 <script>
@@ -309,6 +358,12 @@ function renderSegs(){
     b.onclick = ()=>{ dayIdx=i; localStorage.setItem("bb-day",i); render(); };
     ds.appendChild(b);
   });
+  const lb = document.createElement("button");
+  lb.textContent = "LOG";
+  lb.className = dayIdx===LOGVIEW ? "on":"";
+  lb.setAttribute("role","tab");
+  lb.onclick = ()=>{ dayIdx=LOGVIEW; localStorage.setItem("bb-day",LOGVIEW); render(); };
+  ds.appendChild(lb);
 }
 
 function exCard(ex, w, d, e){
@@ -355,6 +410,7 @@ function exCard(ex, w, d, e){
       const s = load(w,d,e); s.sets = s.sets||[];
       s.sets[i] = !s.sets[i]; save(w,d,e,s);
       b.classList.toggle("done", !!s.sets[i]);
+      if(s.sets[i]) startSession();
     };
     row.appendChild(b);
   }
@@ -364,6 +420,16 @@ function exCard(ex, w, d, e){
 
 function render(){
   renderSegs();
+  renderTimer();
+  const extras = document.querySelectorAll("details.rules:not(.settings)");
+  if(dayIdx===LOGVIEW){
+    $("#weekNote").style.display="none";
+    extras.forEach(el=>{ el.style.display="none"; });
+    renderLog();
+    return;
+  }
+  $("#weekNote").style.display="";
+  extras.forEach(el=>{ el.style.display=""; });
   $("#weekNote").innerHTML = PROGRAM.weekNotes[week] || "";
   const d = PROGRAM.days[dayIdx];
   const root = $("#day"); root.innerHTML = "";
@@ -388,7 +454,200 @@ function render(){
       PROGRAM.loads.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join("")}</tr>`).join("") + "</table>";
   }
 }
+/* ===== TIMER + SESSION LOG + GITHUB BACKUP ===== */
+const LOGVIEW = 4;
+const REPO = "shahk9/belt-and-bar";
+const DAY_SLUGS = ["upper-a","lower-a","upper-b","lower-b"];
+let ticker = null;
+
+function activeSession(){ try{ return JSON.parse(localStorage.getItem("bb-active")||"null"); }catch(_){ return null; } }
+function getLog(){ try{ return JSON.parse(localStorage.getItem("bb-log")||"[]"); }catch(_){ return []; } }
+function setLog(l){ localStorage.setItem("bb-log", JSON.stringify(l)); }
+
+function startSession(){
+  if(activeSession() || dayIdx===LOGVIEW) return;
+  localStorage.setItem("bb-active", JSON.stringify({startedAt: Date.now(), week: week, day: dayIdx}));
+  renderTimer();
+}
+function fmtElapsed(ms){
+  const s = Math.max(0, Math.floor(ms/1000));
+  const h = Math.floor(s/3600), m = Math.floor((s%3600)/60), sec = s%60;
+  return (h ? h+":"+String(m).padStart(2,"0") : String(m)) + ":" + String(sec).padStart(2,"0");
+}
+function renderTimer(){
+  const bar = $("#timerBar"), a = activeSession();
+  if(!a){ bar.style.display="none"; if(ticker){ clearInterval(ticker); ticker=null; } return; }
+  bar.style.display="flex";
+  $("#timerDay").textContent = (PROGRAM.days[a.day] ? PROGRAM.days[a.day].tab : "") + " · W" + a.week;
+  const upd = ()=>{ const cur = activeSession(); if(cur) $("#timerClock").textContent = fmtElapsed(Date.now() - cur.startedAt); };
+  upd();
+  if(!ticker) ticker = setInterval(upd, 1000);
+}
+function pad2(n){ return String(n).padStart(2,"0"); }
+
+function collectExercises(a){
+  const d = PROGRAM.days[a.day];
+  const list = (a.week===6 && d.test) ? d.test : d.ex;
+  return list.map((ex,e)=>{
+    const st = load(a.week,a.day,e);
+    const done = (st.sets||[]).filter(Boolean).length;
+    return { name: ex.n, target: ex.t, kg: st.kg||"", top: st.reps||"", done: done, total: ex.sets||3 };
+  }).filter(x=> x.done>0 || x.kg || x.top);
+}
+function finishSession(){
+  const a = activeSession(); if(!a) return;
+  const mins = Math.max(1, Math.round((Date.now() - a.startedAt)/60000));
+  const dt = new Date(a.startedAt);
+  const date = dt.getFullYear()+"-"+pad2(dt.getMonth()+1)+"-"+pad2(dt.getDate());
+  const rec = {
+    id: date+"-w"+a.week+"-"+DAY_SLUGS[a.day],
+    date: date, week: a.week, dayName: PROGRAM.days[a.day].name, durationMin: mins,
+    exercises: collectExercises(a), synced: false
+  };
+  const log = getLog().filter(r=> r.id!==rec.id);
+  log.push(rec);
+  log.sort((x,y)=> x.date<y.date ? 1 : -1);
+  setLog(log);
+  localStorage.removeItem("bb-active");
+  dayIdx = LOGVIEW; localStorage.setItem("bb-day", LOGVIEW);
+  render();
+  syncAll();
+}
+function discardSession(){
+  if(!confirm("Discard this workout timer? Your ticks and weights stay saved.")) return;
+  localStorage.removeItem("bb-active");
+  renderTimer();
+}
+
+function whoopText(r){
+  const lines = [];
+  lines.push("Belt & Bar — " + r.dayName + " (W" + r.week + ")");
+  lines.push(r.date.split("-").reverse().join(".") + " · " + r.durationMin + " min");
+  r.exercises.forEach(x=>{
+    let l = x.name;
+    if(x.kg) l += " +" + x.kg + " kg";
+    l += " — " + x.done + "/" + x.total + " sets";
+    if(x.top) l += ", top " + x.top;
+    lines.push(l);
+  });
+  return lines.join("\n");
+}
+async function copyText(txt, btn){
+  let ok = false;
+  try{ await navigator.clipboard.writeText(txt); ok = true; }
+  catch(_){
+    const ta = document.createElement("textarea");
+    ta.value = txt; document.body.appendChild(ta); ta.select();
+    try{ ok = document.execCommand("copy"); }catch(__){}
+    ta.remove();
+  }
+  const old = btn.textContent;
+  btn.textContent = ok ? "Copied ✓" : "Copy failed";
+  setTimeout(()=>{ btn.textContent = old; }, 1500);
+}
+
+function renderLog(){
+  const root = $("#day"); root.innerHTML = "";
+  const log = getLog();
+  const head = document.createElement("div"); head.className="dayhead";
+  head.innerHTML = '<h2>Workout Log</h2><span class="est">' + log.length + ' saved</span>';
+  root.appendChild(head);
+
+  if(!log.length){
+    const e = document.createElement("div"); e.className="empty";
+    e.textContent = "Nothing yet. Tick your first set — the timer starts itself — then hit Finish & Save.";
+    root.appendChild(e);
+  }
+  log.forEach(r=>{
+    const card = document.createElement("div"); card.className="logentry";
+    card.innerHTML =
+      '<div class="lrow"><span class="ldate">' + r.date.split("-").reverse().join(".") + '</span>' +
+      '<span class="lday">' + r.dayName + ' · W' + r.week + '</span>' +
+      '<span class="ldur">' + r.durationMin + ' min ' + (r.synced ? "☁" : "📱") + '</span></div>';
+    const detail = document.createElement("div");
+    detail.style.display = "none";
+    const pre = document.createElement("pre"); pre.className = "whoop";
+    pre.textContent = whoopText(r);
+    const actions = document.createElement("div"); actions.className = "logactions";
+    const cp = document.createElement("button"); cp.className = "btn small"; cp.textContent = "Copy for Whoop";
+    cp.onclick = (ev)=>{ ev.stopPropagation(); copyText(whoopText(r), cp); };
+    const del = document.createElement("button"); del.className = "btn small ghost"; del.textContent = "Delete";
+    del.onclick = (ev)=>{
+      ev.stopPropagation();
+      if(!confirm("Delete this workout from the local log?")) return;
+      setLog(getLog().filter(x=> x.id!==r.id));
+      renderLog();
+    };
+    actions.appendChild(cp); actions.appendChild(del);
+    detail.appendChild(pre); detail.appendChild(actions);
+    card.appendChild(detail);
+    card.onclick = ()=>{ detail.style.display = detail.style.display==="none" ? "block" : "none"; };
+    root.appendChild(card);
+  });
+
+  const settings = document.createElement("details");
+  settings.className = "rules settings";
+  settings.innerHTML = '<summary>Backup to GitHub</summary>' +
+    '<div class="body"><p>Paste a fine-grained personal access token (repository: belt-and-bar, permission: Contents → read/write). It is stored only on this device and every finished workout is committed to the repo as a dated file.</p>' +
+    '<div class="tokenrow"><input type="password" id="tokenInput" placeholder="github_pat_..." autocomplete="off"></div>' +
+    '<div class="logactions"><button class="btn small" id="saveTokenBtn">Save token</button>' +
+    '<button class="btn small ghost" id="syncBtn">Sync now</button></div>' +
+    '<div class="syncstatus" id="syncStatus"></div></div>';
+  root.appendChild(settings);
+  const ti = settings.querySelector("#tokenInput");
+  ti.value = localStorage.getItem("bb-token") || "";
+  settings.querySelector("#saveTokenBtn").onclick = ()=>{
+    localStorage.setItem("bb-token", ti.value.trim());
+    setSyncStatus("Token saved on this device.");
+  };
+  settings.querySelector("#syncBtn").onclick = ()=> syncAll(true);
+  updateSyncHint();
+}
+function setSyncStatus(msg){
+  const el = document.getElementById("syncStatus");
+  if(el) el.textContent = msg || "";
+}
+function updateSyncHint(){
+  const pending = getLog().filter(r=>!r.synced).length;
+  if(!localStorage.getItem("bb-token") && pending)
+    setSyncStatus(pending + " workout(s) on this phone only — add a token to back them up.");
+}
+function b64(str){ return btoa(unescape(encodeURIComponent(str))); }
+async function pushRecord(rec, tok){
+  const url = "https://api.github.com/repos/" + REPO + "/contents/data/sessions/" + rec.id + ".json";
+  const headers = { "Authorization": "Bearer " + tok, "Accept": "application/vnd.github+json" };
+  let sha = null;
+  const probe = await fetch(url, { headers: headers });
+  if(probe.ok){ sha = (await probe.json()).sha; }
+  const body = { message: "log: " + rec.id, content: b64(JSON.stringify(rec, null, 2)) };
+  if(sha) body.sha = sha;
+  const res = await fetch(url, { method: "PUT", headers: headers, body: JSON.stringify(body) });
+  if(!res.ok) throw new Error("HTTP " + res.status);
+}
+async function syncAll(verbose){
+  const tok = localStorage.getItem("bb-token");
+  const log = getLog();
+  const pending = log.filter(r=>!r.synced);
+  if(!tok){ updateSyncHint(); return; }
+  if(!pending.length){ if(verbose) setSyncStatus("All synced ✓"); return; }
+  setSyncStatus("Syncing " + pending.length + "…");
+  for(const r of pending){
+    try{
+      await pushRecord(r, tok);
+      r.synced = true; setLog(log);
+    }catch(e){
+      setSyncStatus("Sync failed (" + e.message + "). Saved locally — will retry on next save.");
+      return;
+    }
+  }
+  setSyncStatus("Backed up to GitHub ✓");
+  if(dayIdx===LOGVIEW) renderLog();
+}
+
+$("#finishBtn").onclick = finishSession;
+$("#discardBtn").onclick = discardSession;
 render();
+syncAll();
 </script>
 
 </html>
