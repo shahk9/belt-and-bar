@@ -1,0 +1,18 @@
+{
+  "id": "2026-07-04-w1-upper-a",
+  "date": "2026-07-04",
+  "week": 1,
+  "dayName": "Upper A — Belt Day",
+  "durationMin": 1,
+  "exercises": [
+    {
+      "name": "Weighted Pull-Up",
+      "target": "4 × 6–10",
+      "kg": "10",
+      "top": "12",
+      "done": 1,
+      "total": 4
+    }
+  ],
+  "synced": false
+}
