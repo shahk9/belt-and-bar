@@ -107,14 +107,26 @@
     font-variant-numeric:tabular-nums;
   }
   .field input:focus{outline:none;border-color:var(--brass)}
-  .setrow{display:flex;gap:7px;margin-left:auto}
-  .set{
-    width:34px;height:34px;border-radius:50%;border:1.5px solid var(--brass-dim);
-    background:transparent;color:var(--muted);font-family:var(--mono);font-size:12px;
-    cursor:pointer;padding:0;
+  .setrow{display:flex;gap:6px;margin-left:auto;align-items:center}
+  .setslabel{font-family:var(--mono);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+  .setrow input.repin{
+    width:40px;height:36px;background:transparent;border:1.5px solid var(--brass-dim);border-radius:9px;
+    color:var(--ink);font-family:var(--mono);font-size:14px;text-align:center;padding:0;
+    font-variant-numeric:tabular-nums;
   }
-  .set.done{background:var(--brass);border-color:var(--brass);color:var(--brass-ink);font-weight:700}
-  .set:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+  .setrow input.repin::placeholder{color:var(--muted)}
+  .setrow input.repin.done{background:var(--brass);border-color:var(--brass);color:var(--brass-ink);font-weight:700}
+  .setrow input.repin:focus{outline:none;border-color:var(--brass)}
+  .setrow input.repin::-webkit-outer-spin-button,.setrow input.repin::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+
+  .figico{color:var(--brass);font-size:12px;margin-left:6px;vertical-align:1px}
+  .fig{
+    display:none;align-items:center;gap:12px;
+    background:var(--bg);border:1px solid var(--line);border-radius:8px;
+    padding:8px 10px;margin-top:8px;
+  }
+  .fig svg{width:96px;height:64px;flex:none}
+  .figcue{font-size:12.5px;color:var(--muted)}
 
   details.rules{margin:18px 0 8px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
   details.rules summary{
@@ -170,7 +182,7 @@
   .empty{color:var(--muted);text-align:center;padding:28px 0;font-size:13.5px}
 
   @media (prefers-reduced-motion:no-preference){
-    .set,.seg button{transition:background .12s,color .12s,border-color .12s}
+    .repin,.seg button{transition:background .12s,color .12s,border-color .12s}
     .timerbar .dot{animation:pulse 1.6s infinite}
     @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
   }
@@ -224,7 +236,7 @@ const PROGRAM = {
     6: "<b>W6 — TEST.</b> Rep-PRs at week-5 loads — no ramped max singles on dips. Skill max tests. Log everything; these numbers seed the next block.",
   },
   rules: `
-    <p><b>The engine — double progression.</b> Primaries live in 6–10 reps (pistols 5–8). When the <b>top set</b> hits the ceiling with clean form, add 2.5 kg next session; reps reset toward 6. Top set falls below 6 → strip 2.5 kg. More than 10 in the tank → the load was too light; raise it.</p>
+    <p><b>The engine — double progression.</b> Primaries live in 6–10 reps (pistols 5–8). When the <b>top set (set 1)</b> hits the ceiling with clean form, add 2.5 kg next session; reps reset toward 6. Top set falls below 6 → strip 2.5 kg. More than 10 in the tank → the load was too light; raise it.</p>
     <p><b>The governor.</b> Max <b>+2.5 kg per lift per week</b>, even when reps would allow more. Your strength will outrun your tendons this block; the cap is what lets you train to failure for 6 straight weeks without an elbow or sternum tapping out.</p>
     <p><b>Failure policy.</b> W1: all sets 2 RIR (calibration). W2–5: <b>final set of every primary to muscular failure</b>; every other set 1–2 RIR. Dips: nothing to failure before W3. W6: tests only.</p>
     <p><b>Ramp.</b> Two warm-up sets (50%, 75% of work load) before the first two lifts of every session. Uncounted.</p>
@@ -258,7 +270,7 @@ const PROGRAM = {
       test:[
         { ord:"T1", n:"Weighted Pull-Up — REP PR", t:"PR set @ W5 load", rest:"3:00", sets:3, kg:true, reps:true, fail:"PR set → failure", note:"2 ramp sets, then one all-out set. Target: +10–12.5 kg × 8–10." },
         { ord:"T2", n:"Weighted Dip — REP PR", t:"PR set @ W5 load", rest:"3:00", sets:3, kg:true, reps:true, note:"Target: +12.5 kg × 6–8. No ramped singles — rep PR only." },
-        { ord:"T3", n:"Skill test: chest-to-wall handstand", t:"max hold", rest:"2:00", sets:2, reps:true, note:"Target 45–60 s. Log seconds in top-set field." },
+        { ord:"T3", n:"Skill test: chest-to-wall handstand", t:"max hold", rest:"2:00", sets:2, reps:true, note:"Target 45–60 s. Log seconds per attempt in the rep boxes." },
         { ord:"T4", n:"Skill test: frog / advanced frog", t:"max hold", rest:"2:00", sets:2, reps:true, note:"Target: frog 25–30 s or adv. frog 5–10 s." },
         { ord:"T5", n:"Toes-to-Bar AMRAP", t:"1 max set", rest:"—", sets:1, reps:true }
       ]
@@ -330,6 +342,120 @@ const PROGRAM = {
     }
   ]
 };
+
+/* ===== EXERCISE ILLUSTRATIONS ===== */
+const SVG_OPEN = '<svg viewBox="0 0 120 80" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">';
+const GROUND = '<path d="M12 72H108" stroke="var(--muted)" stroke-width="3"/>';
+const BAR = '<path d="M18 12H102" stroke="var(--muted)" stroke-width="3"/>';
+function body(paths){ return '<g stroke="var(--ink)" stroke-width="4" fill="none">' + paths + '</g>'; }
+function gear(paths){ return '<g stroke="var(--muted)" stroke-width="3" fill="none">' + paths + '</g>'; }
+function plate(x,y,w,h){ return '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="2" fill="var(--brass)"/>'; }
+
+const PULLUP_SVG = SVG_OPEN + BAR +
+  body('<path d="M46 12 54 32M74 12 66 32"/><circle cx="60" cy="22" r="6"/><path d="M60 32V52M60 52 53 68M60 52 67 68"/>') +
+  plate(54,54,12,12) + '</svg>';
+
+const FIGS = {
+  pullup: { svg: PULLUP_SVG, cue: "Dead hang to chin over the bar. Belt load hangs from the hips." },
+  chinup: { svg: PULLUP_SVG, cue: "Same as a pull-up but palms facing you — more biceps, stronger position." },
+  dip: { svg: SVG_OPEN + gear('<path d="M18 34H46M74 34H102M26 34V72M94 34V72"/>') +
+    body('<circle cx="60" cy="16" r="6"/><path d="M60 22V46"/><path d="M60 26 44 34M60 26 76 34"/><path d="M60 46 52 58 56 68"/>') +
+    plate(54,48,12,12) + '</svg>',
+    cue: "Between the bars: down until the shoulder is below the elbow, no bounce, slight forward lean." },
+  pppushup: { svg: SVG_OPEN + GROUND +
+    body('<circle cx="24" cy="38" r="6"/><path d="M30 44 100 66"/><path d="M36 46 52 70"/>') + '</svg>',
+    cue: "Push-up with hands back by your waist, shoulders leaning far past your hands." },
+  wpushup: { svg: SVG_OPEN + GROUND +
+    body('<circle cx="26" cy="42" r="6"/><path d="M32 48 100 66"/><path d="M36 50V70"/>') +
+    plate(44,38,12,10) + '</svg>',
+    cue: "Strict push-up, plates in the backpack, body one rigid line. W4+: this slot becomes dips." },
+  row: { svg: SVG_OPEN + gear('<path d="M20 30H72M26 30V72M66 30V72"/><rect x="82" y="42" width="22" height="14" rx="2"/>') +
+    body('<circle cx="30" cy="60" r="6"/><path d="M36 58 88 46"/><path d="M44 56 42 32M56 53 54 32"/>') + '</svg>',
+    cue: "Hang under a low bar, feet elevated, pull your chest to the bar." },
+  hangraise: { svg: SVG_OPEN + BAR +
+    body('<path d="M50 12 56 30M70 12 64 30"/><circle cx="60" cy="21" r="6"/><path d="M60 30V48"/><path d="M60 48 88 44"/>') + '</svg>',
+    cue: "From a dead hang, raise the legs to horizontal — zero swing." },
+  toebar: { svg: SVG_OPEN + BAR +
+    body('<path d="M50 12 56 30M70 12 64 30"/><circle cx="60" cy="21" r="6"/><path d="M60 30 62 46"/><path d="M62 46Q80 34 90 18"/>') + '</svg>',
+    cue: "Fold at the hips until your toes touch the bar (or your hands)." },
+  bulgarian: { svg: SVG_OPEN + GROUND + gear('<rect x="78" y="54" width="26" height="14" rx="2"/>') +
+    body('<circle cx="46" cy="12" r="6"/><path d="M46 18V36"/><path d="M46 36 38 52 42 70"/><path d="M46 36 66 48 82 56"/>') +
+    plate(41,40,10,12) + '</svg>',
+    cue: "Rear foot on the bench behind you, squat straight down on the front leg, heel heavy." },
+  beltsquat: { svg: SVG_OPEN + gear('<rect x="16" y="54" width="30" height="18" rx="2"/><rect x="74" y="54" width="30" height="18" rx="2"/>') +
+    body('<circle cx="60" cy="14" r="6"/><path d="M60 20V38"/><path d="M60 38 42 46 36 54M60 38 78 46 84 54"/><path d="M60 40V52"/>') +
+    plate(53,52,14,14) + '</svg>',
+    cue: "Plates on the dip belt, one foot on each box — squat and the weight drops into the gap." },
+  nordic: { svg: SVG_OPEN + GROUND + gear('<rect x="84" y="60" width="20" height="10" rx="2"/>') +
+    body('<circle cx="28" cy="26" r="6"/><path d="M34 32 72 66"/><path d="M72 66 96 66"/><path d="M44 40 34 54"/>') + '</svg>',
+    cue: "W1–2 slide curls: bridge and drag heels in. W3+: kneel, ankles anchored, fall forward slow and straight." },
+  hipthrust: { svg: SVG_OPEN + GROUND + gear('<rect x="14" y="42" width="24" height="14" rx="2"/>') +
+    body('<circle cx="24" cy="34" r="6"/><path d="M32 44 70 46"/><path d="M70 46 82 58 82 70"/><path d="M70 46 98 38"/>') +
+    plate(60,36,12,9) + '</svg>',
+    cue: "Shoulders on the bench, plate on the hips, drive up to a dead-straight line. Squeeze 1 s." },
+  calf: { svg: SVG_OPEN + GROUND + gear('<rect x="36" y="60" width="44" height="12" rx="2"/>') +
+    body('<circle cx="52" cy="10" r="6"/><path d="M52 16V42"/><path d="M52 42 50 58"/><path d="M50 60 44 56"/><path d="M52 24 64 40"/>') +
+    plate(60,40,9,11) + '</svg>',
+    cue: "Ball of the foot on the step edge — heel drops for a full stretch, pause tall at the top." },
+  highpull: { svg: SVG_OPEN + '<path d="M18 22H102" stroke="var(--muted)" stroke-width="3"/>' +
+    body('<circle cx="60" cy="12" r="6"/><path d="M60 18V44"/><path d="M60 26 46 30 50 22M60 26 74 30 70 22"/><path d="M60 44 52 60M60 44 68 62"/>') + '</svg>',
+    cue: "Explosive pull-up — bar to chest height, elbows driving down and back." },
+  pike: { svg: SVG_OPEN + GROUND + gear('<rect x="80" y="52" width="24" height="20" rx="2"/>') +
+    body('<path d="M30 70 56 26"/><path d="M56 26 86 52"/><circle cx="36" cy="56" r="6"/>') + '</svg>',
+    cue: "Feet on the box, hips stacked high over your hands — lower the head to the floor between them." },
+  pistol: { svg: SVG_OPEN + GROUND + gear('<rect x="66" y="52" width="28" height="20" rx="2"/>') +
+    body('<circle cx="34" cy="26" r="6"/><path d="M40 32 54 52"/><path d="M54 52 40 56 38 70"/><path d="M54 54 18 58"/><path d="M42 36 20 42"/>') +
+    plate(16,38,9,9) + '</svg>',
+    cue: "One-leg squat sitting back to the box — free leg straight ahead, heel stays down, plate at chest." },
+  lunge: { svg: SVG_OPEN + GROUND +
+    body('<circle cx="54" cy="12" r="6"/><path d="M54 18V42"/><path d="M54 42 40 50 40 70"/><path d="M54 42 68 58 82 66"/>') +
+    plate(49,44,10,12) + '</svg>',
+    cue: "Step backward into the lunge — both knees to 90°, torso tall." },
+  rdl: { svg: SVG_OPEN + GROUND +
+    body('<circle cx="22" cy="32" r="6"/><path d="M28 36 56 44"/><path d="M56 44 54 70"/><path d="M56 44 92 34"/><path d="M36 39 34 56"/>') +
+    plate(29,56,10,11) + '</svg>',
+    cue: "One leg back, hinge until the torso is flat — head to heel one straight line, flat back." },
+  copenhagen: { svg: SVG_OPEN + GROUND + gear('<rect x="74" y="44" width="30" height="12" rx="2"/>') +
+    body('<circle cx="22" cy="46" r="6"/><path d="M26 70 34 70"/><path d="M28 56 30 68"/><path d="M30 56 84 48"/><path d="M56 53 56 64"/>') + '</svg>',
+    cue: "Side plank with the top foot on the bench — hips up, body dead straight." },
+  lsit: { svg: SVG_OPEN + gear('<path d="M30 52H42M36 52V70M62 52H74M68 52V70"/>') + GROUND +
+    body('<circle cx="52" cy="26" r="6"/><path d="M52 32V50"/><path d="M44 38 38 52M60 38 66 52"/><path d="M52 50 94 48"/>') + '</svg>',
+    cue: "On the parallettes: legs locked straight out, shoulders pushed down away from the ears." },
+  handstand: { svg: SVG_OPEN + GROUND + '<path d="M92 8V72" stroke="var(--muted)" stroke-width="3"/>' +
+    body('<circle cx="56" cy="60" r="6"/><path d="M62 70V46"/><path d="M62 46 68 22"/><path d="M68 22 84 10"/>') + '</svg>',
+    cue: "Chest facing the wall, walk the feet up and hands in close — one vertical line." },
+  frog: { svg: SVG_OPEN + GROUND +
+    body('<circle cx="46" cy="38" r="6"/><path d="M52 44Q66 40 72 48"/><path d="M50 48V70M66 50V70"/><path d="M58 46 54 56M72 48 66 58"/>') + '</svg>',
+    cue: "Knees resting on bent elbows, lean forward until the feet float. Straighter arms = advanced." }
+};
+
+function matchFig(name){
+  const n = name.toLowerCase();
+  if(n.indexOf("high pull")>=0 || n.indexOf("muscle-up")>=0) return FIGS.highpull;
+  if(n.indexOf("chin")>=0) return FIGS.chinup;
+  if(n.indexOf("pull-up")>=0) return FIGS.pullup;
+  if(n.indexOf("push-up → dip")>=0) return FIGS.wpushup;
+  if(n.indexOf("dip")>=0) return FIGS.dip;
+  if(n.indexOf("pseudo")>=0) return FIGS.pppushup;
+  if(n.indexOf("pike")>=0) return FIGS.pike;
+  if(n.indexOf("push-up")>=0) return FIGS.wpushup;
+  if(n.indexOf("row")>=0) return FIGS.row;
+  if(n.indexOf("hanging leg raise")>=0) return FIGS.hangraise;
+  if(n.indexOf("toes-to")>=0) return FIGS.toebar;
+  if(n.indexOf("bulgarian")>=0) return FIGS.bulgarian;
+  if(n.indexOf("belt squat")>=0) return FIGS.beltsquat;
+  if(n.indexOf("nordic")>=0 || n.indexOf("leg curl")>=0) return FIGS.nordic;
+  if(n.indexOf("hip thrust")>=0) return FIGS.hipthrust;
+  if(n.indexOf("calf")>=0) return FIGS.calf;
+  if(n.indexOf("pistol")>=0) return FIGS.pistol;
+  if(n.indexOf("lunge")>=0) return FIGS.lunge;
+  if(n.indexOf("rdl")>=0) return FIGS.rdl;
+  if(n.indexOf("copenhagen")>=0) return FIGS.copenhagen;
+  if(n.indexOf("l-sit")>=0) return FIGS.lsit;
+  if(n.indexOf("handstand")>=0) return FIGS.handstand;
+  if(n.indexOf("frog")>=0) return FIGS.frog;
+  return null;
+}
 /* RENDER + STATE */
 const $ = (s)=>document.querySelector(s);
 let week = +(localStorage.getItem("bb-week")||1);
@@ -391,30 +517,37 @@ function exCard(ex, w, d, e){
     inp.onchange = ()=>{ const s=load(w,d,e); s.kg=inp.value; save(w,d,e,s); };
     f.appendChild(inp); track.appendChild(f);
   }
-  if(ex.reps){
-    const f = document.createElement("div"); f.className="field";
-    f.innerHTML = `<label>top set</label>`;
-    const inp = document.createElement("input");
-    inp.type="number"; inp.inputMode="numeric"; inp.value = st.reps ?? "";
-    inp.onchange = ()=>{ const s=load(w,d,e); s.reps=inp.value; save(w,d,e,s); };
-    f.appendChild(inp); track.appendChild(f);
-  }
   const row = document.createElement("div"); row.className="setrow";
+  const lbl = document.createElement("span"); lbl.className="setslabel"; lbl.textContent="reps";
+  row.appendChild(lbl);
   const n = ex.sets||3;
   for(let i=0;i<n;i++){
-    const b = document.createElement("button");
-    b.className = "set" + ((st.sets&&st.sets[i])?" done":"");
-    b.textContent = i+1;
-    b.setAttribute("aria-label",`Set ${i+1}`);
-    b.onclick = ()=>{
+    const inp = document.createElement("input");
+    const v = (st.sets && (typeof st.sets[i]==="string"||typeof st.sets[i]==="number")) ? String(st.sets[i]) : "";
+    inp.className = "repin" + (v!=="" ? " done":"");
+    inp.type="number"; inp.inputMode="numeric"; inp.placeholder="–"; inp.value = v;
+    inp.setAttribute("aria-label",`Set ${i+1} reps`);
+    inp.onchange = ()=>{
       const s = load(w,d,e); s.sets = s.sets||[];
-      s.sets[i] = !s.sets[i]; save(w,d,e,s);
-      b.classList.toggle("done", !!s.sets[i]);
-      if(s.sets[i]) startSession();
+      s.sets[i] = inp.value; save(w,d,e,s);
+      inp.classList.toggle("done", inp.value!=="");
+      if(inp.value!=="") startSession();
     };
-    row.appendChild(b);
+    row.appendChild(inp);
   }
   track.appendChild(row);
+
+  const fig = matchFig(ex.n);
+  if(fig){
+    const nameEl = card.querySelector(".name");
+    const ico = document.createElement("span"); ico.className="figico"; ico.textContent="ⓘ";
+    nameEl.appendChild(ico);
+    const panel = document.createElement("div"); panel.className="fig";
+    panel.innerHTML = fig.svg + '<div class="figcue">' + fig.cue + '</div>';
+    card.insertBefore(panel, track);
+    nameEl.style.cursor = "pointer";
+    nameEl.onclick = ()=>{ panel.style.display = panel.style.display==="flex" ? "none" : "flex"; };
+  }
   return card;
 }
 
@@ -490,9 +623,15 @@ function collectExercises(a){
   const list = (a.week===6 && d.test) ? d.test : d.ex;
   return list.map((ex,e)=>{
     const st = load(a.week,a.day,e);
-    const done = (st.sets||[]).filter(Boolean).length;
-    return { name: ex.n, target: ex.t, kg: st.kg||"", top: st.reps||"", done: done, total: ex.sets||3 };
-  }).filter(x=> x.done>0 || x.kg || x.top);
+    const total = ex.sets||3;
+    const reps = [];
+    for(let i=0;i<total;i++){
+      const v = (st.sets && (typeof st.sets[i]==="string"||typeof st.sets[i]==="number")) ? String(st.sets[i]) : "";
+      reps.push(v);
+    }
+    const done = reps.filter(v=>v!=="").length;
+    return { name: ex.n, target: ex.t, kg: st.kg||"", reps: reps, done: done, total: total };
+  }).filter(x=> x.done>0 || x.kg);
 }
 function finishSession(){
   const a = activeSession(); if(!a) return;
@@ -526,8 +665,9 @@ function whoopText(r){
   r.exercises.forEach(x=>{
     let l = x.name;
     if(x.kg) l += " +" + x.kg + " kg";
-    l += " — " + x.done + "/" + x.total + " sets";
-    if(x.top) l += ", top " + x.top;
+    const rp = (x.reps||[]).filter(v=>v!=="").join("/");
+    if(rp) l += " — " + rp + (x.done<x.total ? " (" + x.done + "/" + x.total + " sets)" : "");
+    else l += " — " + x.done + "/" + x.total + " sets";
     lines.push(l);
   });
   return lines.join("\n");
@@ -555,7 +695,7 @@ function renderLog(){
 
   if(!log.length){
     const e = document.createElement("div"); e.className="empty";
-    e.textContent = "Nothing yet. Tick your first set — the timer starts itself — then hit Finish & Save.";
+    e.textContent = "Nothing yet. Enter reps for your first set — the timer starts itself — then hit Finish & Save.";
     root.appendChild(e);
   }
   log.forEach(r=>{
