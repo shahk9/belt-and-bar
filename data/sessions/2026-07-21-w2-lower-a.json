@@ -1,0 +1,72 @@
+{
+  "id": "2026-07-21-w2-lower-a",
+  "date": "2026-07-21",
+  "week": 2,
+  "dayName": "Lower A — Heavy Legs",
+  "durationMin": 60,
+  "exercises": [
+    {
+      "name": "Weighted Bulgarian Split Squat",
+      "target": "4 × 6–10 /leg",
+      "kg": "40",
+      "reps": [
+        "10",
+        "8",
+        "8",
+        "8"
+      ],
+      "done": 4,
+      "total": 4
+    },
+    {
+      "name": "Belt Squat (standing on boxes)",
+      "target": "4 × 6–10",
+      "kg": "60",
+      "reps": [
+        "10",
+        "10",
+        "10",
+        "14"
+      ],
+      "done": 4,
+      "total": 4
+    },
+    {
+      "name": "Slide Leg Curl → Nordic Negative (W3+)",
+      "target": "2–3 × 3–8",
+      "kg": "",
+      "reps": [
+        "8",
+        "",
+        ""
+      ],
+      "done": 1,
+      "total": 3
+    },
+    {
+      "name": "Single-Leg Hip Thrust",
+      "target": "2–3 × 8–12 /leg",
+      "kg": "10",
+      "reps": [
+        "12",
+        "12",
+        ""
+      ],
+      "done": 2,
+      "total": 3
+    },
+    {
+      "name": "Single-Leg Calf Raise",
+      "target": "3 × 12–15 /leg",
+      "kg": "",
+      "reps": [
+        "15",
+        "",
+        ""
+      ],
+      "done": 1,
+      "total": 3
+    }
+  ],
+  "synced": false
+}
