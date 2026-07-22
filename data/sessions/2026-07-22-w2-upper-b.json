@@ -1,0 +1,72 @@
+{
+  "id": "2026-07-22-w2-upper-b",
+  "date": "2026-07-22",
+  "week": 2,
+  "dayName": "Upper B — Press Day",
+  "durationMin": 77,
+  "exercises": [
+    {
+      "name": "Chin-Up (supinated)",
+      "target": "4 × 6–10",
+      "kg": "0",
+      "reps": [
+        "10",
+        "10",
+        "8",
+        "8"
+      ],
+      "done": 4,
+      "total": 4
+    },
+    {
+      "name": "Weighted Push-Up → Dip (W4+)",
+      "target": "4 × 6–10",
+      "kg": "0",
+      "reps": [
+        "7",
+        "7",
+        "6",
+        "6"
+      ],
+      "done": 4,
+      "total": 4
+    },
+    {
+      "name": "High Pull-Up (explosive)",
+      "target": "3 × 5",
+      "kg": "",
+      "reps": [
+        "5",
+        "5",
+        "5"
+      ],
+      "done": 3,
+      "total": 3
+    },
+    {
+      "name": "Pike Push-Up (feet elevated)",
+      "target": "3 × 6–10",
+      "kg": "",
+      "reps": [
+        "10",
+        "10",
+        ""
+      ],
+      "done": 2,
+      "total": 3
+    },
+    {
+      "name": "Toes-to-Bar",
+      "target": "3 × 8–10",
+      "kg": "",
+      "reps": [
+        "10",
+        "8",
+        "8"
+      ],
+      "done": 3,
+      "total": 3
+    }
+  ],
+  "synced": false
+}
