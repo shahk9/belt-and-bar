@@ -1,0 +1,81 @@
+{
+  "id": "2026-07-24-w2-lower-b",
+  "date": "2026-07-24",
+  "week": 2,
+  "dayName": "Lower B — Single-Leg",
+  "durationMin": 60,
+  "exercises": [
+    {
+      "name": "Weighted Box Pistol",
+      "target": "3 × 5–8 /leg",
+      "kg": "0",
+      "reps": [
+        "8",
+        "8",
+        "8"
+      ],
+      "done": 3,
+      "total": 3
+    },
+    {
+      "name": "Weighted Reverse Lunge (belt)",
+      "target": "3 × 8–10 /leg",
+      "kg": "35",
+      "reps": [
+        "10",
+        "10",
+        "10"
+      ],
+      "done": 3,
+      "total": 3
+    },
+    {
+      "name": "Single-Leg RDL",
+      "target": "2–3 × 8–10 /leg",
+      "kg": "10",
+      "reps": [
+        "10",
+        "10",
+        ""
+      ],
+      "done": 2,
+      "total": 3
+    },
+    {
+      "name": "Hip Thrust (plates on lap)",
+      "target": "3 × 10–12",
+      "kg": "40",
+      "reps": [
+        "10",
+        "10",
+        "10"
+      ],
+      "done": 3,
+      "total": 3
+    },
+    {
+      "name": "Copenhagen Plank",
+      "target": "2 × 20–30 s /side",
+      "kg": "",
+      "reps": [
+        "30",
+        "30"
+      ],
+      "done": 2,
+      "total": 2
+    },
+    {
+      "name": "Toes-to-Hands",
+      "target": "3 × 8",
+      "kg": "",
+      "reps": [
+        "8",
+        "8",
+        "8"
+      ],
+      "done": 3,
+      "total": 3
+    }
+  ],
+  "synced": false
+}
