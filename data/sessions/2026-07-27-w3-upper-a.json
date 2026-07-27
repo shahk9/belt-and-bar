@@ -1,0 +1,83 @@
+{
+  "id": "2026-07-27-w3-upper-a",
+  "date": "2026-07-27",
+  "week": 3,
+  "dayName": "Upper A — Belt Day",
+  "durationMin": 54,
+  "exercises": [
+    {
+      "name": "Weighted Pull-Up",
+      "target": "4 × 6–10",
+      "kg": "6",
+      "reps": [
+        "8",
+        "10",
+        "8",
+        "6"
+      ],
+      "done": 4,
+      "total": 4
+    },
+    {
+      "name": "Weighted Dip",
+      "target": "4 × 6–10",
+      "kg": "10",
+      "reps": [
+        "10",
+        "10",
+        "10",
+        "8"
+      ],
+      "done": 4,
+      "total": 4
+    },
+    {
+      "name": "Pseudo-Planche Push-Up",
+      "target": "3 × 6–10",
+      "kg": "8",
+      "reps": [
+        "7",
+        "10",
+        "10"
+      ],
+      "done": 3,
+      "total": 3
+    },
+    {
+      "name": "Feet-Elevated Row",
+      "target": "3 × 8–12",
+      "kg": "10",
+      "reps": [
+        "10",
+        "10",
+        "10"
+      ],
+      "done": 3,
+      "total": 3
+    },
+    {
+      "name": "Hanging Leg Raise",
+      "target": "3 × 10–12",
+      "kg": "",
+      "reps": [
+        "10",
+        "10",
+        "10"
+      ],
+      "done": 3,
+      "total": 3
+    },
+    {
+      "name": "Prehab: plate Y-raise 2×12 + eccentric wrist curls 2×15",
+      "target": "2 sets",
+      "kg": "",
+      "reps": [
+        "12",
+        "12"
+      ],
+      "done": 2,
+      "total": 2
+    }
+  ],
+  "synced": false
+}
