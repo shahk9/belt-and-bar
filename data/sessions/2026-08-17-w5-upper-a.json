@@ -1,0 +1,72 @@
+{
+  "id": "2026-08-17-w5-upper-a",
+  "date": "2026-08-17",
+  "week": 5,
+  "dayName": "Upper A — Belt Day",
+  "durationMin": 59,
+  "exercises": [
+    {
+      "name": "Weighted Pull-Up",
+      "target": "4 × 6–10",
+      "kg": "10",
+      "reps": [
+        "10",
+        "10",
+        "10",
+        "10"
+      ],
+      "done": 4,
+      "total": 4
+    },
+    {
+      "name": "Weighted Dip",
+      "target": "4 × 6–10",
+      "kg": "10",
+      "reps": [
+        "10",
+        "10",
+        "9",
+        "6"
+      ],
+      "done": 4,
+      "total": 4
+    },
+    {
+      "name": "Pseudo-Planche Push-Up",
+      "target": "3 × 6–10",
+      "kg": "",
+      "reps": [
+        "10",
+        "8",
+        "7"
+      ],
+      "done": 3,
+      "total": 3
+    },
+    {
+      "name": "Feet-Elevated Row",
+      "target": "3 × 8–12",
+      "kg": "",
+      "reps": [
+        "10",
+        "10",
+        "10"
+      ],
+      "done": 3,
+      "total": 3
+    },
+    {
+      "name": "Hanging Leg Raise",
+      "target": "3 × 10–12",
+      "kg": "",
+      "reps": [
+        "10",
+        "10",
+        "10"
+      ],
+      "done": 3,
+      "total": 3
+    }
+  ],
+  "synced": false
+}
