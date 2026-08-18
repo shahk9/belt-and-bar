@@ -1,0 +1,36 @@
+{
+  "id": "2026-08-18-w5-lower-a",
+  "date": "2026-08-18",
+  "week": 5,
+  "dayName": "Lower A — Heavy Legs",
+  "durationMin": 22,
+  "exercises": [
+    {
+      "name": "Weighted Bulgarian Split Squat",
+      "target": "4 × 6–10 /leg",
+      "kg": "40",
+      "reps": [
+        "10",
+        "10",
+        "10",
+        "10"
+      ],
+      "done": 4,
+      "total": 4
+    },
+    {
+      "name": "Belt Squat (standing on boxes)",
+      "target": "4 × 6–10",
+      "kg": "80",
+      "reps": [
+        "10",
+        "10",
+        "",
+        ""
+      ],
+      "done": 2,
+      "total": 4
+    }
+  ],
+  "synced": false
+}
